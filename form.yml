@@ -1,87 +1,92 @@
 ---
-cluster:
-  - "pitzer"
+cluster: "arcc2"
 form:
   - auto_accounts
+  - custom_queue
   - bc_num_hours
-  - num_cores
+  - bc_num_slots
+  - num_cpus
+  - num_gpus
   - node_type
+  - custom_element
 attributes:
-  num_cores:
-    widget: "number_field"
-    label: "Number of cores"
-    value: 1
+  custom_queue:
+    widget: "select"
+    label: "Partition"
+    options:
+      - ["Public", "public"]
+      - ["Short", "short"]
+      - ["Large Memory", "large-mem"]
+      - ["GPU V100", "gpu-v100"]
+      - ["GPU A100", "gpu-a100"]
+      - ["GPU H100", "gpu-h100"]
+  bc_num_hours:
+    label: Walltime (Hours)
     help: |
-      Minimums and maximums will change based on the choice of node type
-      and cluster.
+      - Partition durations:
+        - Short: 4 hours maximum
+        - All others: 480 hours maximum
+      - Exceeding walltime time will automatically stop this job.
+    cacheable: false
+    widget: number_field
+    max: 480
     min: 1
-    max: 48
     step: 1
-  node_type:
-      widget: select
-      label: "Node type"
+    value: 1
+  bc_num_slots: 1
+  num_cpus:
+    label: CPUs (Cores)
+    help: |
+      - CPU Paritions: allocate up to 64 cores
+      - GPU Partitions:
+        - V100 and A100: allocate up to 32 CPU cores per GPU
+        - H100: allocate up to 12 CPU cores per GPU
+    cacheable: false
+    widget: number_field
+    max: 96
+    min: 1
+    step: 1
+    value: 1
+  num_gpus:
+    label: "GPUs"
+    help: |
+       - GPUs Available:
+           - V100 and A100: 2 GPUs per node
+           - H100: 8 GPUs per node
+       - If requesting GPUs, you must select a GPU-enabled partition above
+    cacheable: false
+    widget: number_field
+    max: 8
+    min: 0
+    step: 1
+    value: 0
+  node_type: null
+  custom_element:
+      class: "d-none"
+      skip_label: true
       help: |
-        - **Standard Compute** <br>
-          These are standard HPC machines. Owens has 648 of these nodes with 40
-          cores and 128 GB of memory. Pitzer has 224 of these nodes with 40 cores and
-          340 of these nodes with 48 cores. All pitzer nodes have 192 GB of RAM. Chosing "any" as the node type will decrease
-          your wait time.
-        - **GPU Enabled** <br>
-          These are HPC machines with GPUs. Owens has 160 nodes with 1 [NVIDIA Tesla P100 GPU]
-          and Pitzer has 74 nodes with 2 [NVIDIA Tesla V100 GPUs]. They have the same
-          CPU and memory characteristics of standard compute. However, Pitzer's 40 core machines
-          have 2 GPUs with 16 GB of RAM; and Pitzer's 48 core machines have 2 GPUs with 32 GB of RAM.
-          Dense GPU types have 4 GPUs with 16 GB of RAM.
-        - **Large Memory** <br>
-          These are HPC machines with very large amounts of memory. Owens has 16 hugemem nodes
-          with 48 cores and 1.5 TB of RAM. Pitzer has 4 hugemem nodes with 3 TB of RAM and 80 cores.
-          Pitzer also has 12 Largmem nodes which have 48 cores with 768 GB of RAM.
-
-        [NVIDIA Tesla P100 GPU]: http://www.nvidia.com/object/tesla-p100.html
-        [NVIDIA Tesla V100 GPUs]: https://www.nvidia.com/en-us/data-center/v100/
-      options:
-        - [
-            "any",     "any",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
-        - [
-            "48 core",     "any-48core",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
-        - [
-            "40 core",     "any-40core",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 40,
-          ]
-        - [
-            "any gpu",     "gpu",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
-        - [
-            "40 core gpu",     "gpu-40core",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 40,
-          ]
-        - [
-            "48 core gpu",     "gpu-48core",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
-        - [
-            "largemem", "largemem",
-            data-min-num-cores-for-cluster-pitzer: 24,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
-        - [
-            "hugemem", "hugemem",
-            data-min-num-cores-for-cluster-pitzer: 20,
-            data-max-num-cores-for-cluster-pitzer: 80,
-          ]
-        - [
-            "debug",   "debug",
-            data-min-num-cores-for-cluster-pitzer: 1,
-            data-max-num-cores-for-cluster-pitzer: 48,
-          ]
+        <div class="card mb-3">
+          <div class="card-header">
+            Memory per CPU
+          </div>
+          <div class="card-body">
+            <p class="mb-2">
+              Total memory available ≈ <strong>CPUs x Mem/CPU</strong>.
+            </p>
+            <div class="table-responsive">
+              <table class="table table-sm mb-0">
+                <thead>
+                  <tr><td>Partition</td><td>Mem / CPU</td></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Public</td><td>3800&nbsp;MB (≈ 3.71 GiB)</td></tr>
+                  <tr><td>Short</td><td>3800&nbsp;MB (≈ 3.71 GiB)</td></tr>
+                  <tr><td>Large Memory</td><td>30400&nbsp;MB (≈ 29.7 GiB)</td></tr>
+                  <tr><td>GPU-V100</td><td>3800&nbsp;MB (≈ 3.71 GiB)</td></tr>
+                  <tr><td>GPU-A100</td><td>15200&nbsp;MB (≈ 14.8 GiB)</td></tr>
+                  <tr><td>GPU-H100</td><td>10125&nbsp;MB (≈ 9.89 GiB)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>

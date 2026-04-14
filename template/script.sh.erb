@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 module purge
 
-
-# debug
-
 # Launch Sever
 echo "Starting Mathematica..."
 
@@ -16,23 +13,13 @@ export XDG_DATA_HOME="<%= session.staged_root.join("share") %>"
 export XDG_CACHE_HOME="$(mktemp -d)"
 export $(dbus-launch)
 
-module restore
-module load mathematica/13.2.1
+xfwm4 --compositor=off --sm-client-disable &
+xsetroot -solid "#D3D3D3"
+xfsettingsd --sm-client-disable &
+xfce4-panel --sm-client-disable &
 
-source /etc/os-release
-
-if [[ "$VERSION_ID" < "9" ]]; then
-  xfwm4 --compositor=off --daemon --sm-client-disable
-  xsetroot -solid "#D3D3D3"
-  xfsettingsd --sm-client-disable
-  xfce4-panel --sm-client-disable &
-else
-  xfwm4 --compositor=off --sm-client-disable &
-  xsetroot -solid "#D3D3D3"
-  xfsettingsd --sm-client-disable &
-  xfce4-panel --sm-client-disable &
-fi
-
+module load mathematica/14.3
 module list
 set -x
-mathematica -nosplash
+
+WolframNB
