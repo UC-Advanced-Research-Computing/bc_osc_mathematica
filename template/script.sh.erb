@@ -1,5 +1,17 @@
 #!/usr/bin/env bash
-module purge
+
+<%-
+  form_modules = context.version
+%>
+
+# Load the required environment
+setup_env () {
+  module purge
+  module load <%= form_modules %>
+  module load cuda/12.6.3
+}
+
+setup_env
 
 # Launch Sever
 echo "Starting Mathematica..."
@@ -18,8 +30,6 @@ xsetroot -solid "#D3D3D3"
 xfsettingsd --sm-client-disable &
 xfce4-panel --sm-client-disable &
 
-module load mathematica/14.3
-module load cuda/12.6.3
 module list
 set -x
 
