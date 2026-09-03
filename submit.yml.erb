@@ -52,4 +52,3 @@ script:
     - "--cpus-per-task"
     - "<%= num_cpus.blank? ? 1 : num_cpus.to_i %>"
     - "--gres=gpu:<%= defined?(num_gpus) && !num_gpus.blank? ? num_gpus : "0" %>"
-    - "--qos=<%= auto_accounts %>"
