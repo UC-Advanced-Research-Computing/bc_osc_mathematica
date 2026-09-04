@@ -78,8 +78,8 @@ attributes:
     label: "CUDA version"
     help: |
        - This defines the version of CUDA you want to load for GPU partitions
-          - V100 must be < 13.0
-          - RTX PRO 6000 must be >= 13.0
+          - V100 must be <= 12.8
+          - RTX PRO 6000 must be >= 12.8
     cacheable: false
     options:
       - [ "13.2", "cuda/13.2" ]
